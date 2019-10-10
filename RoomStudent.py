@@ -56,8 +56,12 @@ rooms = [
     }
 ]
 
+rooms_students = defaultdict(list)  # if room does not exist returns empty list
+
 for room in rooms:
     for stud in students:
         if stud['room'] == room['id']:
-            room['students'].append(stud['id'])
-    print('students in room', room['id'], room['students'])
+            room['students'].append(stud['id'])  # collecting students in their rooms by matching id`s
+    rooms_students[room['name']] = room['students']
+
+print(rooms_students)
