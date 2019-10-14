@@ -1,8 +1,6 @@
 # Найти и исправить ошибку (см файл task3.py), оставив многопоточность.
 import concurrent.futures
 
-a = 0
-
 
 def function(arg: int):
     n = 0
@@ -12,10 +10,10 @@ def function(arg: int):
 
 
 def main():
+    a = 0
     with concurrent.futures.ThreadPoolExecutor() as tpe:
         results = [tpe.submit(function, 1000000) for _ in range(5)]
         for z in concurrent.futures.as_completed(results):
-            global a
             a += z.result()
     # threads = []
     # for _ in range(5):
