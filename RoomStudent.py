@@ -1,10 +1,18 @@
 import json
 
 
-with open('rooms.json') as r:
-    rooms = json.load(r)
-with open('students.json') as s:
-    students = json.load(s)
+def load(z):  # .json
+    with open(z) as f:
+        return json.load(f)
+
+
+def dump(file_name: str, d: dict):
+    with open(f'{file_name}.json', 'w') as f:
+        json.dump(d, f, indent=2)
+
+
+rooms = load('rooms.json')
+students = load('students.json')
 
 for room in rooms:
     room['students'] = []
@@ -12,13 +20,4 @@ for room in rooms:
         if st['room'] == room['id']:
             room['students'].append(st)  # collecting students in their rooms by matching id`s
 
-for r in rooms:  # report about rooms and students living
-    print(r['name'])
-    print('-------------------------')
-    for st in r['students']:
-        del st['room']  # we don`t need room id`s in students profiles any more
-        print(st['id'], ':', st['name'])
-    print('\n\n')
-
-with open('rooms_students.json', 'w') as file:
-    json.dump(rooms, file, indent=2)
+dump('rooms_students', rooms)
