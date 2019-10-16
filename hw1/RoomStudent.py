@@ -19,18 +19,23 @@ class DataOut(DataProcessing):
             json.dump(self.data, f, indent=2)
 
 
-rooms = DataIn('rooms.json').load()
-students = DataIn('students.json').load()
+class Packer(DataProcessing):
 
-for room in rooms:
-    room['students'] = []
-    for st in students:
-        if st['room'] == room['id']:
-            room['students'].append(st)  # collecting students in their rooms by matching id`s
+    def pack(self):
+        res = defaultdict(list)
+        for el in self.data:
+            res[el['room']].append(el)
+        return res
 
-# for st in students:
-#     print(st)
-# for r in rooms:
-#     print(r)
 
-# dump('rooms_students', rooms)
+def main():
+    rooms = DataIn('rooms.json').load()
+    students = DataIn('students.json').load()
+    stud_by_rooms = Packer(students).pack()
+    for room in rooms:
+        room['students'] = stud_by_rooms[room['id']]
+    DataOut(rooms).dump('rooms_students')
+
+
+if __name__ == '__main__':
+    main()
