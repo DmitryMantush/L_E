@@ -1,6 +1,3 @@
-from packaging import version as v
-
-
 def one_arg(cls):  # this allows us to give a Version class only 'version' argument
     def wrapper(z: str):
         return cls()(z)
@@ -11,11 +8,26 @@ def one_arg(cls):  # this allows us to give a Version class only 'version' argum
 class Version:
 
     def __init__(self):
-        pass
+        self.result = []
 
     def __call__(self, ver):
         self.ver = ver
-        return v.parse(ver)
+
+        ver_dots_only = ver.replace('-', '.')
+        ver_comp = ver_dots_only.split('.')
+        for token in ver_comp:
+            if token.isdigit():
+                self.result.append(token)
+            else:
+                if token[0].isdigit():
+                    new_token = float(token[0])
+                    for i in range(1, len(token)):
+                        n = (ord(token[i]) - 96) * 0.3 * 10 ** (-i)
+                        new_token += n
+                    self.result.append(str(new_token))
+                else:
+                    self.result.append(token)
+        return self.result
 
 
 def main():
@@ -24,8 +36,8 @@ def main():
         ('1.0.0', '1.42.0'),
         ('1.2.0', '1.2.42'),
         ('1.1.0-alpha', '1.2.0-alpha.1'),
-        # ('1.0.1b', '1.0.10-alpha.beta'),  # this test is failed
-        ('1.0.0-rc.1', '1.0.0'),
+        ('1.0.1b', '1.0.10-alpha.beta'),
+        # ('1.0.0-rc.1', '1.0.0'),  # this test is failed
     ]
 
     for version_1, version_2 in to_test:
